@@ -24,9 +24,11 @@ async def test():
           with open("../config.ini", "a") as config_file:
             config_file.write("[" + device.name + "]\n")
             config_file.write("connection_string = " + connection_str + "\n")
-
+        agent = Agent(device, connection_str)
+        await agent.telemetry_send()
         agents.append(Agent(device, connection_str))
       print(agents)
+    
 
 if __name__ == "__main__":
   asyncio.run(test())
