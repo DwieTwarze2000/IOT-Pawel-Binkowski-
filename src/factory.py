@@ -16,6 +16,6 @@ class Factory:
               self.devices.append(await device.create(self.client, child))
       return self
 
-    async def list_devices(self):
+    async def get_device_names(self):
       for device in self.devices:
           print(device.name)
