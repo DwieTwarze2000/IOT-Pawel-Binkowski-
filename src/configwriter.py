@@ -1,10 +1,25 @@
 from configparser import ConfigParser
 
-config = ConfigParser()
+class Config:
+    def __init__(self):
+        self.config = ConfigParser()
+        self.read()
 
-config['DEFAULT'] = {
-    'ClientURL': 'opc.tcp://localhost:4840/',
-}
+    def read(self):
+        self.config.read("./config.ini")
+        return self.config
 
-with open("config.ini", "w") as config_file:
-    config.write(config_file)
+    def save(self):
+        with open("./config.ini", "w") as config_file:
+            self.config.write(config_file)
+
+    def get_connection_string(self, device_name):
+        if self.config.has_option(device_name, "connection_string"):
+            connection_string = self.config[device_name]["connection_string"]
+        else:
+            connection_string = str(input("Enter connection string for device {}: ".format(device_name)))
+            self.config[device_name] = {
+                "connection_string": connection_string
+            }
+            self.save()
+        return connection_string
