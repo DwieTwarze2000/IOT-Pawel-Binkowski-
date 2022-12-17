@@ -22,5 +22,3 @@ class Device:
   async def write(self, data_nodes, value):
     node = self.client.get_node(self.raports[data_nodes])
     await node.write_value(value)
-
- 

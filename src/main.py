@@ -1,10 +1,13 @@
 import asyncio
-from asyncua import Client
-from factory import Factory
-from agent import Agent
-from device import Device
-from configwriter import Config
 import time
+
+from asyncua import Client
+from asyncua.ua.uaerrors import BadLicenseExpired
+
+from agent import Agent
+from configwriter import Config
+from device import Device
+from factory import Factory
 
 async def test():
   try:
@@ -26,6 +29,7 @@ async def test():
             agent_tasks = agent.taskPackgageF()
             for task in agent_tasks:
               tasks.append(task)
+
           await asyncio.gather(*tasks)
           time.sleep(5)
       except Exception as e:
@@ -36,6 +40,11 @@ async def test():
     print("Goodbye! ;)")
     for agent in agents:
       agent.close()
+  except Exception as e:
+    if isinstance(e, BadLicenseExpired):
+      print("License expired! ;)")
+    else:
+      print(e)
 
 if __name__ == "__main__":
   loop = asyncio.get_event_loop()
