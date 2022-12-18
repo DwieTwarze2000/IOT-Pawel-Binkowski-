@@ -23,3 +23,14 @@ class Config:
             }
             self.save()
         return connection_string
+
+    def get_url(self):
+        if self.config.has_option("opcua", "url"):
+            url = self.config["opcua"]["url"]
+        else:
+            url = str(input("Enter url: "))
+            self.config["opcua"] = {
+                "url": url
+            }
+            self.save()
+        return url

@@ -12,7 +12,8 @@ from factory import Factory
 async def test():
   try:
     config = Config()
-    async with Client(url="opc.tcp://localhost:4840/") as client:
+    url = config.get_url()
+    async with Client(url=url) as client:
       factory = Factory(client)
       factory = await factory.create(client)
       await factory.get_device_names()
