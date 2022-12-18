@@ -1,7 +1,7 @@
 import asyncio
 import json
 from datetime import datetime
-
+from asyncua import ua
 from azure.iot.device import IoTHubDeviceClient, Message, MethodResponse
 
 from device import Device
@@ -11,15 +11,15 @@ class Agent:
     self.device = device
     self.client = IoTHubDeviceClient.create_from_connection_string(connection_string)
     self.client.connect()
+    self.client.on_twin_desired_properties_patch_received = self.updateDesiredProductionRate
     self.client.on_method_request_received = self.methods
     self.tasks = []
     self.client.patch_twin_reported_properties({'DeviceError': None})
     self.client.patch_twin_reported_properties({'ProductionRate': None})
-
     print("Agent created for device: " + self.device.name)
   
   async def telemetry_send(self):
-    # deviceErrors = await self.getErrorName(await self.device.read("DeviceError"))
+   
     sendData = {
       "ProductionStatus": await self.device.read("ProductionStatus"),
       "WorkorderId": await self.device.read("WorkorderId"),
@@ -35,9 +35,13 @@ class Agent:
     await self.updateReportedTwin(sendData)
     print("Sending...")
     print(sendData)
-    msg = Message(json.dumps(sendData), "UTF-8", "JSON")
-    self.client.send_message(msg)
-  
+
+    if await self.device.read("DeviceError") == 1:
+      print("Failed to send message, emergency stopped! :(")
+    else:
+      msg = Message(json.dumps(sendData), "UTF-8", "JSON")
+      self.client.send_message(msg)
+        
   def methods(self, method):
     """
     emergency_stop
@@ -91,3 +95,8 @@ class Agent:
   async def updateReportedTwin(self, data):
     self.client.patch_twin_reported_properties({'DeviceError': data["DeviceError"]})
     self.client.patch_twin_reported_properties({'ProductionRate': data["ProductionRate"]})
+
+  def updateDesiredProductionRate(self,data):
+    print("Desired properties received: " + str(data))
+    if "ProductionRate" in data:
+      self.tasks.append(self.device.write("ProductionRate", ua.Variant(data["ProductionRate"], ua.VariantType.Int32)))

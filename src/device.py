@@ -1,3 +1,4 @@
+from asyncua import ua
 class Device:
   def __init__(self, client, id):
     self.client = client
@@ -19,6 +20,6 @@ class Device:
     node = self.client.get_node(self.raports[data_nodes])
     return await node.read_value()
 
-  async def write(self, data_nodes, value):
+  async def write(self, data_nodes, value: ua.Variant):
     node = self.client.get_node(self.raports[data_nodes])
     await node.write_value(value)
