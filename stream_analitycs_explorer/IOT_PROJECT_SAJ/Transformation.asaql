@@ -1,0 +1,27 @@
+SELECT SUM(i.GoodCount) as SumOfGoodCount, SUM(i.BadCount) as SumOfBadCount, i.WorkorderId
+INTO asproductionkpi
+FROM iotHub as i
+GROUP BY i.WorkorderId, TumblingWindow(second,10); 
+
+SELECT (SUM(i.GoodCount)+SUM(i.BadCount)) as TotalProduction, SUM(i.GoodCount)/(SUM(i.GoodCount)+SUM(i.BadCount))*100 AS KpiPercentage
+INTO asproductionperworkerid
+FROM iotHub as i
+GROUP BY TumblingWindow(minute, 15)
+
+SELECT AVG(i.Temperature) as AverageTemperature, MAX(i.Temperature) as MaximalTemperature, MIN(i.Temperature) as MinimalTemperature, i.WorkorderId
+INTO astemperaturepermachine
+FROM iotHub as i
+GROUP BY i.workorderId, TumblingWindow(minute, 5)
+
+SELECT i.WorkorderId, i.DeviceError.errorCode, COUNT(*) as ErrorOccuredCount
+INTO aserrorpermachine
+FROM iotHub as i
+GROUP BY i.WorkorderId, i.DeviceError.errorCode, TumblingWindow(minute,30)
+
+SELECT ih.IoTHub.ConnectionDeviceId as deviceId, COUNT(type) as errors
+INTO asaBusinessTrigger
+FROM iothub ih TIMESTAMP by EventEnqueuedUtcTime
+WHERE type = 'event'
+GROUP BY
+    type, ih.IoTHub.ConnectionDeviceId, TumblingWindow(minute , 15)
+

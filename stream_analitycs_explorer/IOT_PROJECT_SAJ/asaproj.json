@@ -1,0 +1,34 @@
+{
+    "name": "IOT_PROJECT_SAJ",
+    "startFile": "Transformation.asaql",
+    "configurations": [
+        {
+            "filePath": "JobConfig.json",
+            "subType": "JobConfig"
+        },
+        {
+            "filePath": "Outputs/aserrorpermachine.json",
+            "subType": "Output"
+        },
+        {
+            "filePath": "Outputs/aserrorpermacine3errors.json",
+            "subType": "Output"
+        },
+        {
+            "filePath": "Outputs/asproductionkpi.json",
+            "subType": "Output"
+        },
+        {
+            "filePath": "Outputs/asproductionperworkerid.json",
+            "subType": "Output"
+        },
+        {
+            "filePath": "Outputs/astemperaturepermachine.json",
+            "subType": "Output"
+        },
+        {
+            "filePath": "Inputs/iotHub.json",
+            "subType": "Input"
+        }
+    ]
+}
