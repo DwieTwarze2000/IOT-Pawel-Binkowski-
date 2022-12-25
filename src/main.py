@@ -9,7 +9,7 @@ from configwriter import Config
 from device import Device
 from factory import Factory
 
-async def test():
+async def main():
   try:
     config = Config()
     url = config.get_url()
@@ -49,4 +49,4 @@ async def test():
 
 if __name__ == "__main__":
   loop = asyncio.get_event_loop()
-  loop.run_until_complete(test())
+  loop.run_until_complete(main())
